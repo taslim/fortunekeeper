@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+  
+  .aspect-\[2\/1\] {
+    aspect-ratio: 2 / 1;
+  }
+}
+
+.cookie-shadow {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+} 
