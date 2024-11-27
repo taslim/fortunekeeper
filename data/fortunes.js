@@ -89,32 +89,47 @@ const fortunes = [
   "You will find strength in unexpected places today."
 ].map(fortune => encryptFortune(fortune));
 
-// Generate a random user ID if none exists
-export const getUserId = () => {
-  const storedId = localStorage.getItem('fortuneUserId');
-  if (storedId) return storedId;
-  
-  const newId = Math.random().toString(36).substring(2);
-  localStorage.setItem('fortuneUserId', newId);
-  return newId;
+// Get user's seen fortunes from localStorage
+const getSeenFortunes = () => {
+  try {
+    const seenFortunes = localStorage.getItem('seenFortunes');
+    return seenFortunes ? JSON.parse(seenFortunes) : [];
+  } catch (error) {
+    console.error('Error reading seen fortunes:', error);
+    return [];
+  }
 };
 
-// Get a random fortune based on user ID and current date
+// Save seen fortunes to localStorage
+const saveSeenFortunes = (seenFortunes) => {
+  try {
+    localStorage.setItem('seenFortunes', JSON.stringify(seenFortunes));
+  } catch (error) {
+    console.error('Error saving seen fortunes:', error);
+  }
+};
+
+// Get a random unseen fortune
 export const getFortuneForUser = () => {
-  const userId = getUserId();
-  const today = new Date().toDateString();
+  const seenFortunes = getSeenFortunes();
   
-  // Create a seeded random number based on user ID and date
-  const seed = `${userId}-${today}`;
-  let hash = 0;
-  for (let i = 0; i < seed.length; i++) {
-    hash = ((hash << 5) - hash) + seed.charCodeAt(i);
-    hash = hash & hash; // Convert to 32-bit integer
+  // If user has seen all fortunes, reset the list
+  if (seenFortunes.length >= fortunes.length) {
+    saveSeenFortunes([]);
+    return fortunes[Math.floor(Math.random() * fortunes.length)];
   }
   
-  // Use the hash to select a fortune
-  const index = Math.abs(hash) % fortunes.length;
-  return fortunes[index];
+  // Get unseen fortunes
+  const unseenFortunes = fortunes.filter(fortune => !seenFortunes.includes(fortune));
+  
+  // Pick a random unseen fortune
+  const randomIndex = Math.floor(Math.random() * unseenFortunes.length);
+  const selectedFortune = unseenFortunes[randomIndex];
+  
+  // Add to seen fortunes
+  saveSeenFortunes([...seenFortunes, selectedFortune]);
+  
+  return selectedFortune;
 };
 
 export const decryptFortune = (encryptedFortune) => {

@@ -47,14 +47,15 @@ const FortuneCookie = () => {
       setCookieState('revealed');
       setFortune(decryptedFortune);
       
-      // Set cookies
+      // Set cookies for daily limit
       Cookies.set('lastCracked', new Date().toDateString());
       Cookies.set('currentFortune', todaysFortune);
     }, 1500);
   };
 
   const shareFortune = async () => {
-    const shareText = `🥠 My Fortune Cookie says:\n"${fortune}"\n\nGet your daily fortune at [your-website-url]!`;
+    const websiteUrl = window.location.origin;
+    const shareText = `🥠 My Fortune Cookie says:\n"${fortune}"\n\nGet your daily fortune at ${websiteUrl}!`;
     
     try {
       if (navigator.share) {
@@ -66,12 +67,15 @@ const FortuneCookie = () => {
         alert('Fortune copied to clipboard!');
       }
     } catch (error) {
-      console.error('Error sharing:', error);
-      try {
-        await navigator.clipboard.writeText(shareText);
-        alert('Fortune copied to clipboard!');
-      } catch (clipboardError) {
-        alert('Unable to share or copy fortune');
+      // Only show error message if it's not an abort error
+      if (error.name !== 'AbortError') {
+        try {
+          await navigator.clipboard.writeText(shareText);
+          alert('Fortune copied to clipboard!');
+        } catch (clipboardError) {
+          console.error('Error sharing:', error);
+          alert('Could not share or copy fortune. Please try again.');
+        }
       }
     }
   };
@@ -181,6 +185,7 @@ const FortuneCookie = () => {
                 <button
                   onClick={() => setIsSaved(!isSaved)}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  title={isSaved ? 'Unlike' : 'Like'}
                 >
                   <Heart 
                     className={`w-6 h-6 ${isSaved ? 'fill-red-500 text-red-500' : 'text-gray-500'}`}
@@ -189,6 +194,7 @@ const FortuneCookie = () => {
                 <button
                   onClick={shareFortune}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                  title="Share"
                 >
                   <Share2 className="w-6 h-6 text-gray-500" />
                 </button>
