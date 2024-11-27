@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="45" fill="#FFD784" filter="drop-shadow(0 2px 3px rgba(0,0,0,0.2))"/>
+  <circle cx="35" cy="40" r="3" fill="rgba(0,0,0,0.3)"/>
+  <circle cx="65" cy="40" r="3" fill="rgba(0,0,0,0.3)"/>
+  <circle cx="40" cy="65" r="3" fill="rgba(0,0,0,0.3)"/>
+  <circle cx="60" cy="65" r="3" fill="rgba(0,0,0,0.3)"/>
+</svg> 
