@@ -19,15 +19,21 @@ const FortuneCookie = () => {
 
   // Check for existing fortune on mount
   useEffect(() => {
-    const lastCracked = Cookies.get('lastCracked');
+    const lastCracked = Cookies.get('lastCracked') || localStorage.getItem('lastCracked');
     const today = new Date().toDateString();
     
     if (lastCracked === today) {
-      const savedFortune = Cookies.get('currentFortune');
+      const savedFortune = Cookies.get('currentFortune') || localStorage.getItem('currentFortune');
       if (savedFortune) {
         setFortune(decryptFortune(savedFortune));
         setCookieState('revealed');
       }
+    } else {
+      // Clear fortune if it's a new day
+      Cookies.remove('currentFortune');
+      Cookies.remove('lastCracked');
+      localStorage.removeItem('currentFortune');
+      localStorage.removeItem('lastCracked');
     }
   }, []);
 
@@ -48,6 +54,30 @@ const FortuneCookie = () => {
 
     return () => clearInterval(timer);
   }, []);
+
+  const breakCookie = () => {
+    const lastCracked = Cookies.get('lastCracked') || localStorage.getItem('lastCracked');
+    const today = new Date().toDateString();
+    
+    // Check both storage methods
+    if (lastCracked === today) {
+      return;
+    }
+    
+    setCookieState('cracked');
+    setTimeout(() => {
+      const todaysFortune = getFortuneForUser();
+      const decryptedFortune = decryptFortune(todaysFortune);
+      setCookieState('revealed');
+      setFortune(decryptedFortune);
+      
+      // Store in both cookie and localStorage
+      Cookies.set('lastCracked', today, COOKIE_EXPIRY);
+      Cookies.set('currentFortune', todaysFortune, COOKIE_EXPIRY);
+      localStorage.setItem('lastCracked', today);
+      localStorage.setItem('currentFortune', todaysFortune);
+    }, 1500);
+  };
 
   // Get a random unseen fortune
   const getFortuneForUser = () => {
@@ -70,20 +100,6 @@ const FortuneCookie = () => {
     saveSeenFortunes([...seenFortunes, selectedFortune]);
     
     return selectedFortune;
-  };
-
-  const breakCookie = () => {
-    setCookieState('cracked');
-    setTimeout(() => {
-      const todaysFortune = getFortuneForUser();
-      const decryptedFortune = decryptFortune(todaysFortune);
-      setCookieState('revealed');
-      setFortune(decryptedFortune);
-      
-      // Set cookies for daily limit
-      Cookies.set('lastCracked', new Date().toDateString(), COOKIE_EXPIRY);
-      Cookies.set('currentFortune', todaysFortune, COOKIE_EXPIRY);
-    }, 1500);
   };
 
   return (
