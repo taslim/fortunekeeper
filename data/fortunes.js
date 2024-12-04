@@ -1,9 +1,7 @@
-// Simple encryption to make it harder to view all fortunes
-const encryptFortune = (text) => {
-  return Buffer.from(text).toString('base64');
-};
+import { encryptFortune } from '../utils/fortune';
 
-const fortunes = [
+// Raw fortunes array
+const rawFortunes = [
   "A pigeon will eye your sandwich today. Stand strong.",
   "You will find a sock, but it won't match any others you own.",
   "A stranger will compliment your shoes. Wear your fanciest pair.",
@@ -87,51 +85,7 @@ const fortunes = [
   "Be curious today. It will lead to something unexpected.",
   "A tiny moment of joy will have a ripple effect. Savor it.",
   "You will find strength in unexpected places today."
-].map(fortune => encryptFortune(fortune));
+];
 
-// Get user's seen fortunes from localStorage
-const getSeenFortunes = () => {
-  try {
-    const seenFortunes = localStorage.getItem('seenFortunes');
-    return seenFortunes ? JSON.parse(seenFortunes) : [];
-  } catch (error) {
-    console.error('Error reading seen fortunes:', error);
-    return [];
-  }
-};
-
-// Save seen fortunes to localStorage
-const saveSeenFortunes = (seenFortunes) => {
-  try {
-    localStorage.setItem('seenFortunes', JSON.stringify(seenFortunes));
-  } catch (error) {
-    console.error('Error saving seen fortunes:', error);
-  }
-};
-
-// Get a random unseen fortune
-export const getFortuneForUser = () => {
-  const seenFortunes = getSeenFortunes();
-  
-  // If user has seen all fortunes, reset the list
-  if (seenFortunes.length >= fortunes.length) {
-    saveSeenFortunes([]);
-    return fortunes[Math.floor(Math.random() * fortunes.length)];
-  }
-  
-  // Get unseen fortunes
-  const unseenFortunes = fortunes.filter(fortune => !seenFortunes.includes(fortune));
-  
-  // Pick a random unseen fortune
-  const randomIndex = Math.floor(Math.random() * unseenFortunes.length);
-  const selectedFortune = unseenFortunes[randomIndex];
-  
-  // Add to seen fortunes
-  saveSeenFortunes([...seenFortunes, selectedFortune]);
-  
-  return selectedFortune;
-};
-
-export const decryptFortune = (encryptedFortune) => {
-  return Buffer.from(encryptedFortune, 'base64').toString('utf-8');
-}; 
+// Export encrypted fortunes
+export const fortunes = rawFortunes.map(fortune => encryptFortune(fortune)); 

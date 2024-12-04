@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Share2, Heart, Clock } from 'lucide-react';
 import Cookies from 'js-cookie';
-import { getFortuneForUser, decryptFortune } from '../data/fortunes';
+import { WholeCookie, CrackedCookie } from '../components/CookieSVG';
+import { decryptFortune, getSeenFortunes, saveSeenFortunes, shareFortune } from '../utils/fortune';
+import { fortunes } from '../data/fortunes';
+
+const COOKIE_EXPIRY = {
+  path: '/',
+  expires: 1, // 1 day
+  sameSite: 'strict'
+};
 
 const FortuneCookie = () => {
   const [cookieState, setCookieState] = useState('ready');
@@ -9,6 +17,7 @@ const FortuneCookie = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState('');
 
+  // Check for existing fortune on mount
   useEffect(() => {
     const lastCracked = Cookies.get('lastCracked');
     const today = new Date().toDateString();
@@ -22,6 +31,7 @@ const FortuneCookie = () => {
     }
   }, []);
 
+  // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
@@ -39,6 +49,29 @@ const FortuneCookie = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // Get a random unseen fortune
+  const getFortuneForUser = () => {
+    const seenFortunes = getSeenFortunes();
+    
+    // If user has seen all fortunes, reset the list
+    if (seenFortunes.length >= fortunes.length) {
+      saveSeenFortunes([]);
+      return fortunes[Math.floor(Math.random() * fortunes.length)];
+    }
+    
+    // Get unseen fortunes
+    const unseenFortunes = fortunes.filter(fortune => !seenFortunes.includes(fortune));
+    
+    // Pick a random unseen fortune
+    const randomIndex = Math.floor(Math.random() * unseenFortunes.length);
+    const selectedFortune = unseenFortunes[randomIndex];
+    
+    // Add to seen fortunes
+    saveSeenFortunes([...seenFortunes, selectedFortune]);
+    
+    return selectedFortune;
+  };
+
   const breakCookie = () => {
     setCookieState('cracked');
     setTimeout(() => {
@@ -48,103 +81,10 @@ const FortuneCookie = () => {
       setFortune(decryptedFortune);
       
       // Set cookies for daily limit
-      Cookies.set('lastCracked', new Date().toDateString());
-      Cookies.set('currentFortune', todaysFortune);
+      Cookies.set('lastCracked', new Date().toDateString(), COOKIE_EXPIRY);
+      Cookies.set('currentFortune', todaysFortune, COOKIE_EXPIRY);
     }, 1500);
   };
-
-  const shareFortune = async () => {
-    const websiteUrl = window.location.origin;
-    const shareText = `🥠 My Fortune Cookie says:\n"${fortune}"\n\nGet your daily fortune at ${websiteUrl}!`;
-    
-    try {
-      if (navigator.share) {
-        await navigator.share({
-          text: shareText
-        });
-      } else {
-        await navigator.clipboard.writeText(shareText);
-        alert('Fortune copied to clipboard!');
-      }
-    } catch (error) {
-      // Only show error message if it's not an abort error
-      if (error.name !== 'AbortError') {
-        try {
-          await navigator.clipboard.writeText(shareText);
-          alert('Fortune copied to clipboard!');
-        } catch (clipboardError) {
-          console.error('Error sharing:', error);
-          alert('Could not share or copy fortune. Please try again.');
-        }
-      }
-    }
-  };
-
-  const WholeCookie = () => (
-    <svg viewBox="0 0 300 150" className="w-full h-full">
-      <path
-        d="M45 75 Q75 30 150 30 Q225 30 255 75 Q225 120 150 120 Q75 120 45 75"
-        fill="#FFD784"
-        className="cookie-shadow"
-      />
-      <path
-        d="M255 75 Q247 82 240 85"
-        fill="none"
-        stroke="#000"
-        strokeWidth="1"
-        opacity="0.3"
-      />
-      <circle cx="90" cy="67" r="1.5" fill="#000" opacity="0.3" />
-      <circle cx="210" cy="67" r="1.5" fill="#000" opacity="0.3" />
-      <circle cx="112" cy="97" r="1.5" fill="#000" opacity="0.3" />
-      <circle cx="187" cy="97" r="1.5" fill="#000" opacity="0.3" />
-    </svg>
-  );
-
-  const CrackedCookie = () => (
-    <div className="relative w-full h-full overflow-hidden">
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="relative w-4/5 aspect-[2/1]">
-          <div 
-            className="absolute inset-0 origin-right transition-all duration-700 ease-out" 
-            style={{transform: 'rotate(-3deg) translateX(-10%)'}}
-          >
-            <svg viewBox="0 0 300 150">
-              <path
-                d="M45 75 Q75 30 150 30 L150 75 L150 120 Q75 120 45 75"
-                fill="#FFD784"
-                className="cookie-shadow"
-              />
-              <circle cx="90" cy="67" r="1.5" fill="#000" opacity="0.3" />
-              <circle cx="112" cy="97" r="1.5" fill="#000" opacity="0.3" />
-            </svg>
-          </div>
-          
-          <div 
-            className="absolute inset-0 origin-left transition-all duration-700 ease-out"
-            style={{transform: 'rotate(3deg) translateX(10%)'}}
-          >
-            <svg viewBox="0 0 300 150">
-              <path
-                d="M150 30 Q225 30 255 75 Q225 120 150 120 L150 75 L150 30"
-                fill="#FFD784"
-                className="cookie-shadow"
-              />
-              <path
-                d="M255 75 Q247 82 240 85"
-                fill="none"
-                stroke="#000"
-                strokeWidth="1"
-                opacity="0.3"
-              />
-              <circle cx="210" cy="67" r="1.5" fill="#000" opacity="0.3" />
-              <circle cx="187" cy="97" r="1.5" fill="#000" opacity="0.3" />
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-amber-50 to-amber-100 p-4">
@@ -192,7 +132,7 @@ const FortuneCookie = () => {
                   />
                 </button>
                 <button
-                  onClick={shareFortune}
+                  onClick={() => shareFortune(fortune)}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                   title="Share"
                 >
