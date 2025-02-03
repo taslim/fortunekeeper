@@ -1,0 +1,56 @@
+2025-02-03T00:52:58Z info: Deployment: 7da38599-a297-4492-8ef7-868cbc245478
+2025-02-03T00:52:58Z info: Build: 0d092e5b-e25a-4f3f-a499-b2ce87c6458a
+2025-02-03T00:52:58Z info: Connecting to builder
+2025-02-03T00:53:01Z info: Builder connected
+2025-02-03T00:53:01Z info: Installing packages
+2025-02-03T00:53:01Z info: Starting Build
+
+> fortune-keeper@0.1.0 build
+> next build
+
+
+  ▲ Next.js 14.2.18
+
+   Linting and checking validity of types ...
+
+   Creating an optimized production build ...
+
+ ✓ Compiled successfully
+
+   Collecting page data ...
+
+   Generating static pages (0/3) ...
+
+ ✓ Generating static pages (3/3)
+
+   Finalizing page optimization ...
+
+   Collecting build traces ...
+
+Route (pages)                             Size     First Load JS
+┌ ○ / (589 ms)                            17.7 kB        95.8 kB
+├   /_app                                 0 B            78.1 kB
+├ ○ /404                                  181 B          78.2 kB
+└ ƒ /api/likes                            0 B            78.1 kB
++ First Load JS shared by all             80.6 kB
+  ├ chunks/framework-64ad27b21261a9ce.js  44.9 kB
+  ├ chunks/main-37642c1da3d96e59.js       32.1 kB
+  └ other shared chunks (total)           3.7 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+2025-02-03T00:53:32Z info: Pushing pid1 binary layer...
+2025-02-03T00:53:33Z info: Pushing hosting layer...
+2025-02-03T00:53:33Z info: Pushing Repl layer...
+2025-02-03T00:53:33Z info: Retrieved cached nix layer
+2025-02-03T00:53:33Z info: Created hosting layer
+2025-02-03T00:53:34Z info: Created pid1 binary layer
+2025-02-03T00:53:54Z info: Created Repl layer
+2025-02-03T00:53:55Z info: Pushed image manifest
+2025-02-03T00:53:55Z info: Pushed soci index manifest
+2025-02-03T00:53:55Z info: Pushed referrer manifest
+2025-02-03T00:53:59Z info: Creating Autoscale service
+starting up user application
+https://nextjs.org/telemetry
+2025-02-03T00:55:45Z error: The deployment is failing health checks. This can happen if the application isn't responding or responds with an error code. Check the logs for more information.
