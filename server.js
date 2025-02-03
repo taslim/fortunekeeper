@@ -29,12 +29,12 @@ app.prepare()
       };
       
       handle(req, res, parsedUrl);
-    }).listen(80, '0.0.0.0', (err) => {
+    }).listen(3000, '0.0.0.0', (err) => {
       if (err) {
         console.error(`[${new Date().toISOString()}] Server start error:`, err);
         throw err;
       }
-      console.log(`[${new Date().toISOString()}] Server listening on port 80`);
+      console.log(`[${new Date().toISOString()}] Server listening on port 3000`);
     });
 
     // Add error handling
