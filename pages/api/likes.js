@@ -2,6 +2,7 @@
 let fortuneLikes = {};
 
 export default function handler(req, res) {
+  console.log(`[${new Date().toISOString()}] /api/likes called - Method: ${req.method}`);
   const { method, body } = req;
   
   switch (method) {
