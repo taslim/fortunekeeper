@@ -1,3 +1,53 @@
-node_modules
-/.next
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+yarn.lock
+package-lock.json
+
+# Build outputs
+/dist/
+/build/
+*.tsbuildinfo
+
+# Environment and configuration files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.npmrc
+
+# IDE and editor files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Testing
+/coverage/
+
+# Cache directories
+.cache/
+.upm/
+.local/
+.config/
+
+# Replit specific
 .replit
+replit.nix
+
+# Server specific
+server/public/
+*.tar.gz
